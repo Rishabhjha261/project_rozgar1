@@ -8,7 +8,7 @@ const GeoPointSchema = new mongoose.Schema(
       // [lng, lat]
       validate: {
         validator: (v) => Array.isArray(v) && v.length === 2,
-        message: 'coordinates must be [lng, lat]',
+        message: 'coordinates must  [lng, lat]',
       },
       required: true,
     },
