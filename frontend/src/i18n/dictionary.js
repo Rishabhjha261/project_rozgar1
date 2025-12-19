@@ -52,7 +52,56 @@ export const DICTIONARY = {
     'category.electrician': 'Electrician',
     'category.plumber': 'Plumber',
     'category.labour': 'Labour',
-    'category.waiter': 'Waiter',
+    'category.waiter': 'Waiter',// Extra navigation
+'nav.faq': 'FAQ',
+'nav.help': 'Help',
+'nav.terms': 'Terms & Conditions',
+'nav.privacy': 'Privacy Policy',
+'nav.logout': 'Logout',
+
+// Job actions & status
+'job.apply': 'Apply',
+'job.applied': 'Applied',
+'job.posted': 'Posted',
+'job.verified': 'Verified',
+'job.unverified': 'Unverified',
+'job.hidden': 'Hidden',
+'job.active': 'Active',
+'job.closed': 'Closed',
+
+// Form & UI
+'form.phone': 'Phone Number',
+'form.location': 'Location',
+'form.salary': 'Salary',
+'form.experience': 'Experience',
+'form.shift': 'Shift',
+'form.shift.day': 'Day',
+'form.shift.night': 'Night',
+'form.fullTime': 'Full-time',
+'form.partTime': 'Part-time',
+'form.loading': 'Loading...',
+'form.error': 'Something went wrong',
+
+// More categories
+'category.cook': 'Cook',
+'category.cleaner': 'Cleaner',
+'category.housekeeper': 'Housekeeper',
+'category.babysitter': 'Babysitter / Nanny',
+'category.caretaker': 'Caretaker',
+'category.helper': 'Helper',
+'category.construction_worker': 'Construction Worker',
+'category.painter': 'Painter',
+'category.mechanic': 'Mechanic',
+'category.carpenter': 'Carpenter',
+'category.factory_worker': 'Factory Worker',
+'category.warehouse_worker': 'Warehouse Worker',
+'category.loader': 'Loader / Unloader',
+'category.tailor': 'Tailor',
+'category.barber': 'Barber',
+'category.salon_worker': 'Salon Worker',
+'category.driver_heavy': 'Heavy Vehicle Driver',
+'category.driver_light': 'Light Vehicle Driver',
+
   },
 
   hi: {
@@ -109,6 +158,44 @@ export const DICTIONARY = {
     'category.plumber': 'प्लंबर',
     'category.labour': 'मजदूर',
     'category.waiter': 'वेटर',
+     'nav.faq': 'सवाल-जवाब',
+'nav.help': 'मदद',
+'nav.terms': 'नियम और शर्तें',
+'nav.privacy': 'प्राइवेसी पॉलिसी',
+'nav.logout': 'लॉगआउट',
+
+'job.apply': 'आवेदन करें',
+'job.applied': 'आवेदन किया',
+'job.posted': 'पोस्ट किया',
+'job.verified': 'सत्यापित',
+'job.unverified': 'असत्यापित',
+'job.hidden': 'छुपाया गया',
+'job.active': 'सक्रिय',
+'job.closed': 'बंद',
+
+'form.phone': 'फोन नंबर',
+'form.location': 'स्थान',
+'form.salary': 'वेतन',
+'form.experience': 'अनुभव',
+'form.shift': 'शिफ्ट',
+'form.shift.day': 'दिन',
+'form.shift.night': 'रात',
+'form.fullTime': 'फुल टाइम',
+'form.partTime': 'पार्ट टाइम',
+
+'category.cook': 'रसोइया',
+'category.cleaner': 'सफाई कर्मचारी',
+'category.housekeeper': 'हाउसकीपर',
+'category.babysitter': 'बेबीसिटर',
+'category.caretaker': 'देखभाल करने वाला',
+'category.helper': 'हेल्पर',
+'category.construction_worker': 'निर्माण मजदूर',
+'category.painter': 'पेंटर',
+'category.mechanic': 'मैकेनिक',
+'category.carpenter': 'बढ़ई',
+'category.factory_worker': 'फैक्ट्री मजदूर',
+'category.warehouse_worker': 'वेयरहाउस मजदूर',
+
   },
 
   te: {
@@ -165,6 +252,27 @@ export const DICTIONARY = {
     'category.plumber': 'ప్లంబర్',
     'category.labour': 'కూలీ',
     'category.waiter': 'వెయిటర్',
+    'nav.faq': 'తరచూ అడిగే ప్రశ్నలు',
+'nav.help': 'సహాయం',
+'nav.logout': 'లాగ్ అవుట్',
+
+'job.apply': 'అప్లై చేయండి',
+'job.verified': 'ధృవీకరించబడింది',
+'job.hidden': 'దాచబడింది',
+
+'form.phone': 'ఫోన్ నంబర్',
+'form.location': 'లోకేషన్',
+'form.salary': 'జీతం',
+'form.experience': 'అనుభవం',
+
+'category.cook': 'వంటవాడు',
+'category.cleaner': 'క్లీనర్',
+'category.housekeeper': 'హౌస్‌కీపర్',
+'category.caretaker': 'కేర్‌టేకర్',
+'category.helper': 'హెల్పర్',
+'category.painter': 'పెయింటర్',
+'category.mechanic': 'మెకానిక్',
+
   },
 
   bn: {
@@ -221,6 +329,27 @@ export const DICTIONARY = {
     'category.plumber': 'প্লাম্বার',
     'category.labour': 'মজুর',
     'category.waiter': 'ওয়েটার',
+    'nav.faq': 'తరచూ అడిగే ప్రశ్నలు',
+'nav.help': 'సహాయం',
+'nav.logout': 'లాగ్ అవుట్',
+
+'job.apply': 'అప్లై చేయండి',
+'job.verified': 'ధృవీకరించబడింది',
+'job.hidden': 'దాచబడింది',
+
+'form.phone': 'ఫోన్ నంబర్',
+'form.location': 'లోకేషన్',
+'form.salary': 'జీతం',
+'form.experience': 'అనుభవం',
+
+'category.cook': 'వంటవాడు',
+'category.cleaner': 'క్లీనర్',
+'category.housekeeper': 'హౌస్‌కీపర్',
+'category.caretaker': 'కేర్‌టేకర్',
+'category.helper': 'హెల్పర్',
+'category.painter': 'పెయింటర్',
+'category.mechanic': 'మెకానిక్',
+
   },
 
   mr: {
@@ -277,5 +406,23 @@ export const DICTIONARY = {
     'category.plumber': 'प्लंबर',
     'category.labour': 'मजूर',
     'category.waiter': 'वेटर',
+    'nav.faq': 'प्रश्नोत्तरे',
+'nav.help': 'मदत',
+'nav.logout': 'लॉगआउट',
+
+'job.apply': 'अर्ज करा',
+'job.verified': 'सत्यापित',
+'job.hidden': 'लपवलेले',
+
+'form.phone': 'फोन नंबर',
+'form.location': 'ठिकाण',
+'form.salary': 'पगार',
+
+'category.cook': 'स्वयंपाकी',
+'category.cleaner': 'सफाई कामगार',
+'category.housekeeper': 'हाउसकीपर',
+'category.caretaker': 'देखभाल करणारा',
+'category.helper': 'हेल्पर',
+
   },
 }
