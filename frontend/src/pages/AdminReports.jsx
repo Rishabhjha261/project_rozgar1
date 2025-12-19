@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useT } from '../i18n/useT'
 import { useJobsStore } from '../store/jobsStore'
@@ -16,8 +16,8 @@ export default function AdminReports() {
   const { t } = useT()
   const [tab, setTab] = useState('open')
 
-  // ✅ PER-JOB loading state (IMPORTANT)
-  const [updatingJobs, setUpdatingJobs] = useState(() => new Set())
+  // ✅ Track which jobs are being updated
+  const [updatingJobs, setUpdatingJobs] = useState(new Set())
 
   const reports = useReportsStore((s) => s.reports)
   const reportsStatus = useReportsStore((s) => s.status)
@@ -61,16 +61,8 @@ export default function AdminReports() {
     [reports, tab]
   )
 
-  // ✅ helpers
-  const startUpdating = (jobId) =>
-    setUpdatingJobs((s) => new Set(s).add(jobId))
-
-  const stopUpdating = (jobId) =>
-    setUpdatingJobs((s) => {
-      const next = new Set(s)
-      next.delete(jobId)
-      return next
-    })
+  // ✅ Track which job already rendered its moderation button
+  const renderedJobs = useRef(new Set())
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8">
@@ -97,11 +89,9 @@ export default function AdminReports() {
 
       <div className="mt-4 grid gap-3">
         {reportsStatus === 'loading' ? (
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 text-sm">
-            Loading…
-          </div>
+          <div className="rounded-2xl border bg-white p-4">Loading…</div>
         ) : reportsStatus === 'error' ? (
-          <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
+          <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-rose-700">
             Failed to load reports
             {reportsError?.message ? ` (${reportsError.message})` : ''}
           </div>
@@ -109,6 +99,15 @@ export default function AdminReports() {
           filtered.map((r) => {
             const job = getJobById(r.jobId)
             const isHidden = Boolean(job?.hidden)
+
+            const jobAlreadyRendered = job
+              ? renderedJobs.current.has(job.id)
+              : false
+
+            if (job && !jobAlreadyRendered) {
+              renderedJobs.current.add(job.id)
+            }
+
             const isUpdating = job && updatingJobs.has(job.id)
 
             return (
@@ -134,7 +133,8 @@ export default function AdminReports() {
                       </button>
                     )}
 
-                    {job && (
+                    {/* ✅ ONLY ONE HIDE / UNHIDE PER JOB */}
+                    {job && !jobAlreadyRendered && (
                       <button
                         disabled={isUpdating}
                         className={`rounded-2xl px-3 py-2 text-sm font-semibold ${
@@ -143,7 +143,7 @@ export default function AdminReports() {
                             : 'border border-slate-200 bg-white text-slate-900'
                         }`}
                         onClick={async () => {
-                          startUpdating(job.id)
+                          setUpdatingJobs((s) => new Set(s).add(job.id))
                           try {
                             if (isHidden) {
                               await unhideJob(job.id)
@@ -151,7 +151,11 @@ export default function AdminReports() {
                               await hideJob(job.id)
                             }
                           } finally {
-                            stopUpdating(job.id) // ✅ ALWAYS runs
+                            setUpdatingJobs((s) => {
+                              const next = new Set(s)
+                              next.delete(job.id)
+                              return next
+                            })
                           }
                         }}
                       >
@@ -192,7 +196,7 @@ export default function AdminReports() {
             )
           })
         ) : (
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 text-sm">
+          <div className="rounded-2xl border bg-white p-4">
             No {tab} reports.
           </div>
         )}
