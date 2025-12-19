@@ -1,5 +1,3 @@
-
-
 export const DICTIONARY = {
   en: {
     'nav.home': 'Home',
