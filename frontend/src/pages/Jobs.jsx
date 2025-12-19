@@ -27,8 +27,8 @@ export default function Jobs() {
   const savedJobIds = useJobsStore((s) => s.savedJobIds)
 
   useEffect(() => {
-    fetchJobs({ category: categoryKey || undefined, location })
-  }, [fetchJobs, categoryKey, location])
+    fetchJobs({ category: categoryKey || undefined })
+  }, [fetchJobs, categoryKey])
 
   const visibleJobs = useMemo(() => {
     return (jobs || []).filter((j) => !j.hidden)
@@ -40,29 +40,48 @@ export default function Jobs() {
 
   const category = useMemo(() => getCategory(categoryKey), [categoryKey])
 
+  // ✅ FIXED LOCATION-BASED SORTING
   const filteredJobs = useMemo(() => {
     const q = query.trim().toLowerCase()
 
-    let jobs = visibleJobs
+    let list = visibleJobs
 
-    if (categoryKey) jobs = jobs.filter((j) => j.category === categoryKey)
+    if (categoryKey) list = list.filter((j) => j.category === categoryKey)
     if (savedOnly) {
       const saved = new Set(savedJobIds)
-      jobs = jobs.filter((j) => saved.has(j.id))
+      list = list.filter((j) => saved.has(j.id))
     }
-    if (q) jobs = jobs.filter((j) => j.title.toLowerCase().includes(q) || j.area.toLowerCase().includes(q))
+    if (q) {
+      list = list.filter(
+        (j) =>
+          j.title.toLowerCase().includes(q) ||
+          j.area.toLowerCase().includes(q)
+      )
+    }
 
-    const withDistance = jobs.map((j) => {
-      const km = location && j.geo ? distanceKm(location, j.geo) : null
+    const withDistance = list.map((j) => {
+      if (!location) return { job: j, km: null }
+
+      // ✅ normalize job coordinates
+      const jobLoc =
+        j.geo ||
+        j.location ||
+        (j.lat != null && j.lng != null
+          ? { lat: j.lat, lng: j.lng }
+          : null)
+
+      const km =
+        jobLoc && jobLoc.lat != null && jobLoc.lng != null
+          ? distanceKm(location, jobLoc)
+          : null
+
       return { job: j, km }
     })
 
     withDistance.sort((a, b) => {
-      // distance first if both exist
       if (a.km != null && b.km != null) return a.km - b.km
       if (a.km != null) return -1
       if (b.km != null) return 1
-      // else recency
       return (b.job.createdAt || 0) - (a.job.createdAt || 0)
     })
 
@@ -82,7 +101,7 @@ export default function Jobs() {
         filteredJobs.slice(0, 50).map(async ({ job }) => {
           const translated = await translateText(job.title, language)
           return [job.id, translated]
-        }),
+        })
       )
 
       if (!cancelled) setTitleById(Object.fromEntries(entries))
@@ -98,11 +117,16 @@ export default function Jobs() {
     <div className="mx-auto max-w-5xl px-4 py-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">{t('jobs.title')}</h1>
+          <h1 className="text-2xl font-bold text-slate-900">
+            {t('jobs.title')}
+          </h1>
           <div className="mt-1 text-sm text-slate-600">
             {category ? (
               <>
-                Category: <span className="font-semibold">{t(category.labelKey)}</span>
+                Category:{' '}
+                <span className="font-semibold">
+                  {t(category.labelKey)}
+                </span>
               </>
             ) : (
               t('jobs.sortingNote')
@@ -122,7 +146,9 @@ export default function Jobs() {
 
       <div className="mt-4 grid gap-3 rounded-3xl border border-slate-200 bg-white p-4 shadow-sm md:grid-cols-3">
         <label className="grid gap-1 md:col-span-2">
-          <span className="text-xs font-semibold text-slate-700">{t('common.search')}</span>
+          <span className="text-xs font-semibold text-slate-700">
+            {t('common.search')}
+          </span>
           <div className="flex gap-2">
             <input
               className="h-11 w-full rounded-2xl border border-slate-200 bg-white px-3 text-sm"
@@ -130,19 +156,17 @@ export default function Jobs() {
               onChange={(e) => setQuery(e.target.value)}
               placeholder={t('home.searchPlaceholder')}
             />
-            <div className="shrink-0">
-              <VoiceSearchButton
-                language={language}
-                onText={(text) => {
-                  setQuery(text)
-                }}
-              />
-            </div>
+            <VoiceSearchButton
+              language={language}
+              onText={(text) => setQuery(text)}
+            />
           </div>
         </label>
 
         <label className="grid gap-1">
-          <span className="text-xs font-semibold text-slate-700">Category</span>
+          <span className="text-xs font-semibold text-slate-700">
+            Category
+          </span>
           <select
             className="h-11 rounded-2xl border border-slate-200 bg-white px-3 text-sm"
             value={categoryKey}
@@ -176,7 +200,7 @@ export default function Jobs() {
             ★ {savedOnly ? t('common.saved') : t('common.save')}
           </button>
 
-          {categoryKey ? (
+          {categoryKey && (
             <button
               type="button"
               className="rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-900"
@@ -188,7 +212,7 @@ export default function Jobs() {
             >
               Clear category
             </button>
-          ) : null}
+          )}
         </div>
       </div>
 
@@ -199,7 +223,8 @@ export default function Jobs() {
           </div>
         ) : status === 'error' ? (
           <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
-            Failed to load jobs. {error?.message ? `(${error.message})` : ''}
+            Failed to load jobs.
+            {error?.message ? ` (${error.message})` : ''}
           </div>
         ) : filteredJobs.length ? (
           filteredJobs.map(({ job, km }) => (
