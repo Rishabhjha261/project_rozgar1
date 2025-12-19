@@ -13,7 +13,7 @@ const app = express()
 app.use(express.json({ limit: '1mb' }))
 
 const PORT = process.env.PORT || 4000
-const corsOrigin = process.env.CORS_ORIGIN || 'http://localhost:5173'
+const corsOrigin = process.env.CORS_ORIGIN || 'https://project-rozgar1-frontend1.onrender.com'
 
 app.use(
   cors({
