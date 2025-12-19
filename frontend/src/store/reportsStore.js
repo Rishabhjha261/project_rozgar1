@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { apiFetch } from '../api/client'
+import { usePrefsStore } from '../store/prefsStore'
 
 function normalizeReport(doc) {
   if (!doc) return null
@@ -11,39 +12,113 @@ function normalizeReport(doc) {
     notes: String(doc.notes || ''),
     status: String(doc.status || 'open'),
     reporterId: doc.reporterId || null,
-    createdAt: doc.createdAt ? new Date(doc.createdAt).getTime() : Date.now(),
+    createdAt: doc.createdAt
+      ? new Date(doc.createdAt).getTime()
+      : Date.now(),
   }
 }
 
 export const useReportsStore = create((set) => ({
   reports: [],
-  status: 'idle',
+  status: 'idle', // idle | loading | ready | error
   error: null,
 
-  fetchReports: async ({ status } = {}) => {
+  fetchReports: async ({ filterStatus } = {}) => {
+    const prefs = usePrefsStore.getState()
+
+    // ✅ Graceful admin guard
+    if (!prefs.clientId || prefs.role !== 'admin') {
+      set({
+        reports: [],
+        status: 'error',
+        error: { message: 'Unauthorized', status: 403 },
+      })
+      return []
+    }
+
     set({ status: 'loading', error: null })
+
     try {
-      const data = await apiFetch('/api/reports', { query: { status } })
-      const reports = (data.reports || []).map(normalizeReport).filter(Boolean)
+      const data = await apiFetch('/api/reports', {
+        query: { status: filterStatus },
+      })
+
+      const reports = (data.reports || [])
+        .map(normalizeReport)
+        .filter(Boolean)
+
       set({ reports, status: 'ready' })
       return reports
     } catch (e) {
-      set({ status: 'error', error: e })
+      set({
+        status: 'error',
+        error: {
+          message: e.message || 'Failed to fetch reports',
+          status: e.status || 500,
+        },
+      })
       return []
     }
   },
 
   addReport: async ({ jobId, reason, notes }) => {
-    const data = await apiFetch('/api/reports', { method: 'POST', body: { jobId, reason, notes } })
-    const created = normalizeReport(data.report)
-    set((s) => ({ reports: [created, ...s.reports] }))
-    return created
+    set({ error: null })
+
+    try {
+      const data = await apiFetch('/api/reports', {
+        method: 'POST',
+        body: { jobId, reason, notes },
+      })
+
+      const created = normalizeReport(data.report)
+      set((s) => ({
+        reports: [created, ...s.reports],
+      }))
+      return created
+    } catch (e) {
+      set({
+        error: {
+          message: e.message || 'Failed to add report',
+          status: e.status || 500,
+        },
+      })
+      return null
+    }
   },
 
   resolveReport: async (reportId) => {
-    const data = await apiFetch(`/api/reports/${encodeURIComponent(reportId)}/resolve`, { method: 'PATCH' })
-    const updated = normalizeReport(data.report)
-    set((s) => ({ reports: s.reports.map((r) => (r.id === updated.id ? updated : r)) }))
-    return updated
+    const prefs = usePrefsStore.getState()
+
+    if (!prefs.clientId || prefs.role !== 'admin') {
+      set({
+        error: { message: 'Unauthorized', status: 403 },
+      })
+      return null
+    }
+
+    try {
+      const data = await apiFetch(
+        `/api/reports/${encodeURIComponent(reportId)}/resolve`,
+        { method: 'PATCH' }
+      )
+
+      const updated = normalizeReport(data.report)
+
+      set((s) => ({
+        reports: s.reports.map((r) =>
+          r.id === updated.id ? updated : r
+        ),
+      }))
+
+      return updated
+    } catch (e) {
+      set({
+        error: {
+          message: e.message || 'Failed to resolve report',
+          status: e.status || 500,
+        },
+      })
+      return null
+    }
   },
 }))
