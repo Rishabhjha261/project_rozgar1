@@ -1,6 +1,6 @@
 import { usePrefsStore } from '../store/prefsStore'
 
-const DEFAULT_BASE = 'http://localhost:4000'
+const DEFAULT_BASE = 'https://project-rozgar-backend.onrender.com'
 
 export function getApiBaseUrl() {
   return import.meta.env.VITE_API_BASE_URL || DEFAULT_BASE
