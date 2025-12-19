@@ -12,6 +12,8 @@ function persist(key, value) {
   writeJSON(key, value)
 }
 
+let lastFetchId = 0 // ✅ prevents race conditions
+
 export const useJobsStore = create((set, get) => ({
   jobs: [],
   status: 'idle', // idle | loading | ready | error
@@ -19,8 +21,21 @@ export const useJobsStore = create((set, get) => ({
 
   savedJobIds: loadArray(STORAGE_KEYS.savedJobIds),
 
-  fetchJobs: async ({ category, q, location, includeHidden, ownerId, maxDistanceKm } = {}) => {
-    set({ status: 'loading', error: null })
+  fetchJobs: async ({
+    category,
+    q,
+    location,
+    includeHidden,
+    ownerId,
+    maxDistanceKm,
+  } = {}) => {
+    const fetchId = ++lastFetchId
+
+    set((s) => ({
+      status: s.jobs.length ? s.status : 'loading',
+      error: null,
+    }))
+
     try {
       const query = {
         category: category ? String(category).toLowerCase() : undefined,
@@ -32,11 +47,26 @@ export const useJobsStore = create((set, get) => ({
       }
 
       const data = await apiFetch('/api/jobs', { query })
-      const jobs = (data.jobs || []).map(normalizeJob).filter(Boolean)
+
+      // ✅ ignore outdated responses
+      if (fetchId !== lastFetchId) return get().jobs
+
+      const jobs = (data.jobs || [])
+        .map(normalizeJob)
+        .filter(Boolean)
+
       set({ jobs, status: 'ready' })
       return jobs
     } catch (e) {
-      set({ status: 'error', error: e })
+      if (fetchId !== lastFetchId) return get().jobs
+
+      set({
+        status: 'error',
+        error: {
+          message: e.message || 'Failed to fetch jobs',
+          status: e.status || 500,
+        },
+      })
       return []
     }
   },
@@ -48,10 +78,12 @@ export const useJobsStore = create((set, get) => ({
       const data = await apiFetch(`/api/jobs/${encodeURIComponent(id)}`)
       const normalized = normalizeJob(data.job)
 
-      set((s) => {
-        const without = s.jobs.filter((j) => j.id !== normalized.id)
-        return { jobs: [normalized, ...without] }
-      })
+      set((s) => ({
+        jobs: [
+          normalized,
+          ...s.jobs.filter((j) => j.id !== normalized.id),
+        ],
+      }))
 
       return normalized
     } catch {
@@ -64,35 +96,73 @@ export const useJobsStore = create((set, get) => ({
   },
 
   createJob: async (payload) => {
-    const data = await apiFetch('/api/jobs', { method: 'POST', body: payload })
-    const created = normalizeJob(data.job)
-    set((s) => ({ jobs: [created, ...s.jobs.filter((j) => j.id !== created.id)] }))
-    return created
+    try {
+      const data = await apiFetch('/api/jobs', {
+        method: 'POST',
+        body: payload,
+      })
+
+      const created = normalizeJob(data.job)
+
+      set((s) => ({
+        jobs: [
+          created,
+          ...s.jobs.filter((j) => j.id !== created.id),
+        ],
+      }))
+
+      return created
+    } catch (e) {
+      set({
+        error: {
+          message: e.message || 'Failed to create job',
+          status: e.status || 500,
+        },
+      })
+      return null
+    }
   },
 
   setJobHidden: async ({ jobId, hidden }) => {
-    const data = await apiFetch(`/api/jobs/${encodeURIComponent(jobId)}/hidden`, {
-      method: 'PATCH',
-      body: { hidden },
-    })
+    try {
+      const data = await apiFetch(
+        `/api/jobs/${encodeURIComponent(jobId)}/hidden`,
+        {
+          method: 'PATCH',
+          body: { hidden },
+        }
+      )
 
-    const updated = normalizeJob(data.job)
-    set((s) => ({ jobs: s.jobs.map((j) => (j.id === updated.id ? updated : j)) }))
-    return updated
+      const updated = normalizeJob(data.job)
+
+      set((s) => ({
+        jobs: s.jobs.map((j) =>
+          j.id === updated.id ? updated : j
+        ),
+      }))
+
+      return updated
+    } catch (e) {
+      set({
+        error: {
+          message: e.message || 'Failed to update job',
+          status: e.status || 500,
+        },
+      })
+      return null
+    }
   },
 
-  hideJob: async (jobId) => {
-    return get().setJobHidden({ jobId, hidden: true })
-  },
-
-  unhideJob: async (jobId) => {
-    return get().setJobHidden({ jobId, hidden: false })
-  },
+  hideJob: async (jobId) => get().setJobHidden({ jobId, hidden: true }),
+  unhideJob: async (jobId) => get().setJobHidden({ jobId, hidden: false }),
 
   toggleSaved: (jobId) => {
     set((s) => {
       const exists = s.savedJobIds.includes(jobId)
-      const next = exists ? s.savedJobIds.filter((id) => id !== jobId) : [jobId, ...s.savedJobIds]
+      const next = exists
+        ? s.savedJobIds.filter((id) => id !== jobId)
+        : [jobId, ...s.savedJobIds]
+
       persist(STORAGE_KEYS.savedJobIds, next)
       return { savedJobIds: next }
     })
