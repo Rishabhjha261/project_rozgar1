@@ -20,7 +20,6 @@ app.use('/api/auth', authRouter)
 app.use('/api/jobs', jobsRouter)
 app.use('/api/reports', reportsRouter)
 
-const port = Number(process.env.PORT || 4000)
 
 async function main() {
   await connectToMongo(process.env.MONGODB_URI)
