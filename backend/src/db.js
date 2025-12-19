@@ -10,7 +10,7 @@ export async function connectToMongo(mongoUri) {
       serverSelectionTimeoutMS: 12000,
     });
 
-    console.log("✅ MongoDB connected successfully");
+    console.log(" MongoDB connected successfully");
   } catch (error) {
     console.error("❌ MongoDB connection failed:");
     console.error(error.message);
