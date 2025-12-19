@@ -3,14 +3,14 @@ import { getCurrentPosition } from '../utils/geo'
 import { readJSON, STORAGE_KEYS, writeJSON } from '../utils/storage'
 import { isSupportedLanguage } from '../i18n/languages'
 
-const PREFS_VERSION = 2 // 🔥 bump version to reset old data
+const PREFS_VERSION = 2 // reset old persisted prefs safely
 
 const DEFAULT_PREFS = {
   version: PREFS_VERSION,
   role: 'employee',
-  language: 'en', // ✅ English first
-  location: null,
-  locationStatus: 'idle',
+  language: 'en', // English first
+  location: null, // { lat, lng, accuracy, timestamp }
+  locationStatus: 'idle', // idle | requesting | granted | denied | error
   autoTranslateDynamic: true,
   clientId: null,
 }
@@ -25,7 +25,7 @@ function newId() {
 function loadPrefs() {
   const stored = readJSON(STORAGE_KEYS.prefs, null)
 
-  // ✅ If no stored prefs OR old version → RESET to English
+  // Reset old versions → enforce English + clean state
   if (!stored || stored.version !== PREFS_VERSION) {
     return {
       ...DEFAULT_PREFS,
@@ -33,7 +33,6 @@ function loadPrefs() {
     }
   }
 
-  // ✅ Normal load (validated)
   const base = { ...DEFAULT_PREFS, ...stored }
 
   return {
@@ -49,6 +48,7 @@ function persist(next) {
     role: next.role,
     language: next.language,
     location: next.location,
+    locationStatus: next.locationStatus,
     autoTranslateDynamic: next.autoTranslateDynamic,
     clientId: next.clientId,
   })
@@ -89,27 +89,52 @@ export const usePrefsStore = create((set, get) => {
         return next
       }),
 
+    // ✅ FIXED LOCATION HANDLING (PRODUCTION SAFE)
     requestLocation: async () => {
       const currentStatus = get().locationStatus
       if (currentStatus === 'requesting') return
 
-      set({ locationStatus: 'requesting' })
+      // Start request
+      set((s) => {
+        const next = { ...s, locationStatus: 'requesting' }
+        persist(next)
+        return next
+      })
+
       try {
         const loc = await getCurrentPosition()
+
         set((s) => {
-          const next = { ...s, location: loc, locationStatus: 'granted' }
+          const next = {
+            ...s,
+            location: loc,
+            locationStatus: 'granted',
+          }
           persist(next)
           return next
         })
       } catch (err) {
-        const denied = err?.code === 1
-        set({ locationStatus: denied ? 'denied' : 'error' })
+        const denied = err?.code === 1 // permission denied
+
+        set((s) => {
+          const next = {
+            ...s,
+            location: null, // clear stale location
+            locationStatus: denied ? 'denied' : 'error',
+          }
+          persist(next)
+          return next
+        })
       }
     },
 
     clearLocation: () =>
       set((s) => {
-        const next = { ...s, location: null, locationStatus: 'idle' }
+        const next = {
+          ...s,
+          location: null,
+          locationStatus: 'idle',
+        }
         persist(next)
         return next
       }),
