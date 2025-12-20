@@ -4,7 +4,7 @@
 https://project-rozgar1-frontend1.onrender.com/
 
 💻 **GitHub Repository**  
-https://github.com/Rishabhjha261/YOUR_REPO_NAME
+https://github.com/Rishabhjha261/project_rozgar1
 
 ---
 
@@ -88,10 +88,11 @@ Rozgar is designed to solve these problems.
 - The data structure is **backend-ready** and can be connected to real APIs easily.
 
 ### Authentication
-- Authentication is **not implemented**.
+- Simple signup page.
+- Authentication is **not implemented**. So there is the option of manual selection of roles to see how each role would see the application.
 - This was a conscious decision to:
   - Reduce friction for first-time users
-  - Allow instant browsing and application via call or WhatsApp
+  - Allow instant browsing and better testing.
 
 ---
 
