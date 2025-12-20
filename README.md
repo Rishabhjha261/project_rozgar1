@@ -161,4 +161,4 @@ Rozgar is designed to solve these problems.
 Rishabh Jha
 React Developer
 📞 Contact: 6206798893
-📧 Email: jharishav@261
+📧 Email: jharishav261@gmail.com
