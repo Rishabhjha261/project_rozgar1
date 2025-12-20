@@ -1,178 +1,143 @@
-Rozgar – Blue-Collar Job Discovery Platform
+# Rozgar – Blue-Collar Job Discovery Platform
 
-🔗 Live Application
+🔗 **Live Application**  
 https://project-rozgar1-frontend1.onrender.com/
 
-💻 GitHub Repository
-https://github.com/Rishabhjha261/project_rozgar1
+💻 **GitHub Repository**  
+https://github.com/Rishabhjha261/YOUR_REPO_NAME
 
-🌍 Overview
+---
 
-Rozgar is a mobile-first job discovery platform built for blue-collar and semi-skilled workers such as maids, drivers, security guards, delivery partners, electricians, and plumbers.
+## Overview
 
-The platform is designed with user empathy at its core and works seamlessly on any device — mobile, tablet, or desktop.
+**Rozgar** is a mobile-first job discovery platform designed specifically for **blue-collar and semi-skilled workers** such as maids, drivers, security guards, delivery partners, electricians, and plumbers.
 
-❓ The PROMBLEM
+The application focuses on **simplicity, accessibility, and real-world usability** and works smoothly on **any device** — mobile, tablet, or desktop.
+
+---
+
+## Problem Statement
 
 Most existing job portals:
+- Are text heavy
+- Require form filling and login
+- Are difficult for non-English users
+- Do not prioritize nearby jobs
 
-Are text-heavy and confusing
+Blue-collar workers usually:
+- Need jobs **near their location**
+- Prefer **visual recognition** over reading
+- Want **quick contact**, not long forms
+- Worry about **fake or unverified job posts**
+- Already use **phone calls and WhatsApp**
 
-Require form filling and login
+Rozgar is designed to solve these problems.
 
-Are difficult for non-English users
+---
 
-Do not prioritize nearby jobs
+## Key Features
 
-However, blue-collar workers usually:
+- **Language Translation Support**  
+  Users can switch languages to understand job details easily.
 
-Need jobs near their location
+- **Location-Wise Job Sorting**  
+  Nearby jobs are shown first, reducing travel effort.
 
-Prefer visual recognition over reading
+- **Symbol-Based Job Recognition**  
+  Icons and symbols help illiterate or semi-literate users identify job types quickly.
 
-Want quick contact, not long forms
+- **Minimal Scrolling UI**  
+  Important information is visible with very few scroll actions.
 
-Worry about fake or unverified job posts
+- **Direct Call & WhatsApp Apply**  
+  Workers can apply easily by calling or messaging employers directly.
 
-Already use phone calls and WhatsApp
+- **Job Verification Status**  
+  Each job clearly shows whether it is **Verified or Not Verified**.  
+  Verification is done by the **app owner** to build trust.
 
-Rozgar is built specifically to solve these problems.
+- **Reported Job Moderation**  
+  Reported jobs can be reviewed and removed by the app owner.
 
-⭐ Key Features
-🌐 Language Translation
+- **Works on Any Device**  
+  Fully responsive and usable on mobile, tablet, and desktop.
 
-Users can switch languages to understand job details easily.
+---
 
-📍 Location-Wise Job Sorting
+## Data & Authentication
 
-Nearby jobs are shown first, reducing travel time and effort.
+### Mock Data
+- The current version works on **mock/sample data**.
+- This allowed focus on **UX, frontend architecture, and product flow** within limited time.
+- The data structure is **backend-ready** and can be connected to real APIs easily.
 
-🧠 Symbol-Based Job Recognition
+### Authentication
+- Authentication is **not implemented**.
+- This was a conscious decision to:
+  - Reduce friction for first-time users
+  - Allow instant browsing and application via call or WhatsApp
 
-Icons and symbols help illiterate or semi-literate users identify job types quickly.
+---
 
-📜 Minimal Scrolling UI
+## Challenges Faced & Trade-offs
 
-Important information is visible with very few scroll actions.
+### Language Translation
+- Google Translate APIs are paid.
+- Implemented a **dictionary-based translation system** for core content.
+- Trade-off: Not fully dynamic, but lightweight and scalable.
 
-📞 Direct Call & WhatsApp Apply
+### Location-Wise Job Sorting
+- Real-time GPS increases complexity and privacy concerns.
+- Implemented **proximity-based sorting logic**.
+- Trade-off: GPS can be added later without UI redesign.
 
-Workers can call or WhatsApp employers with one tap, making job application effortless.
+### Backend Integration
+- Full backend integration was limited by time.
+- Built a **backend-ready frontend** using mock data.
+- Trade-off: UX and flow are complete; APIs can be added later.
 
-✅ Job Verification Status
+### Authentication
+- OTP authentication requires backend and extra UI states.
+- Skipped to keep job discovery **fast and frictionless**.
 
-Each job clearly shows Verified / Not Verified status.
-Verification is done by the app owner to build trust.
+### Voice / Speaker Support
+- Browser compatibility and testing required more time.
+- Deferred and focused on **visual accessibility** instead.
 
-🚨 Reported Job Handling
+### Trust & Verification
+- Users worry about fake job posts.
+- Added **Verified / Not Verified** status and owner moderation.
+- Trade-off: Manual verification effort but higher user trust.
 
-Jobs reported by users can be reviewed and removed by the app owner.
+---
 
-📱 Works on Any Device
+## Tech Stack
 
-Fully responsive and usable on mobile, tablet, and desktop.
+- React.js
+- Vite
+- JavaScript (ES6+)
+- CSS
+- Node.js
+- MongoDB
 
-🔐 Data & Authentication Approach
-Mock Data Usage
+---
 
-The current version runs on mock/sample data.
+## What I’m Proud Of
 
-This allowed focus on UX, frontend structure, and user flow within limited time.
+- Designing for **real blue-collar users**, not assumptions
+- Making job application as easy as a **phone call or WhatsApp**
+- Building trust using **job verification and reporting**
+- Creating an interface usable even for **low-literacy users**
+- Making clear trade-offs instead of half-building features
+- Delivering a **live, working product** within time constraints
+- Owning the full journey: product thinking → UI → frontend → deployment
 
-Data structures are backend-ready and can be connected to real APIs easily.
+---
 
-Authentication
 
-Authentication is not implemented in this version.
+---
 
-This was a deliberate product decision to:
-
-Reduce friction for first-time users
-
-Allow instant job browsing and application via call/WhatsApp
-
-OTP-based authentication can be added later without changing the UI.
-
-⚖️ Challenges Faced & Trade-offs
-🌐 Language Translation
-
-Challenge: Google Translate APIs are paid.
-
-Decision: Built a dictionary-based translation system.
-
-Trade-off: Limited dynamic translation but lightweight and cost-effective.
-
-📍 Location-Wise Sorting
-
-Challenge: Real-time GPS adds complexity and privacy concerns.
-
-Decision: Implemented proximity-based sorting logic.
-
-Trade-off: GPS can be added later without redesign.
-
-🔐 Authentication
-
-Challenge: Requires backend, OTP flows, and extra UI states.
-
-Decision: Skipped authentication to keep experience frictionless.
-
-Trade-off: Faster access for users; auth can be added later.
-
-🔧 Backend Integration
-
-Challenge: Limited challenge timeline.
-
-Decision: Used mock data with backend-ready frontend architecture.
-
-Trade-off: Complete product flow without full API setup.
-
-🔊 Voice / Speaker Support
-
-Challenge: Browser compatibility and testing effort.
-
-Decision: Deferred and focused on visual accessibility instead.
-
-Trade-off: Icons and minimal text already support low-literacy users.
-
-🛡 Trust & Verification
-
-Challenge: Users fear fake job postings.
-
-Decision: Added verified badges and owner-controlled moderation.
-
-Trade-off: Manual effort, but significantly higher trust.
-
-🛠 Tech Stack
-
-React.js
-
-Vite
-
-JavaScript (ES6+)
-
-CSS
-
-Node.js
-
-MongoDB
-
-🌟 What I’m Proud Of
-
-Designing for real blue-collar users, not assumptions
-
-Making job application as easy as a phone call or WhatsApp message
-
-Building trust using verification and reporting features
-
-Creating a UI usable even for low-literacy users
-
-Making clear trade-offs instead of half-building features
-
-Delivering a working, deployed product within time constraints
-
-Owning the full journey: product thinking → UI → frontend → deployment
-
-This project reflects how I approach real-world problems with empathy, clarity, and responsibility.
+> This project reflects my ability to balance **user empathy, technical decisions, and delivery constraints** while shipping usable software.
 
 👤 Author
 
