@@ -1,82 +1,193 @@
-# Rozgar — Blue-collar jobs nearby
+Rozgar – Blue-Collar Job Discovery Platform
 
-A mobile-first “Naukri for blue-collar workers” prototype focused on fast discovery, low-friction flows, regional-language friendliness, and trust signals.
+🔗 Live Application
+https://project-rozgar1-frontend1.onrender.com/
 
-## Live features (high level)]
-- Job browsing by category + search (plus optional location-based sorting).
-- Three roles: `employee`, `employer`, `admin`.
-- Employer can post jobs.
-- Admin can view reports and hide/unhide job listings.
-- Voice search (browser-dependent; see notes below).
+💻 GitHub Repository
+https://github.com/Rishabhjha261/project_rozgar1
 
-## Tech stack
-Frontend (`frontend/`)
-- React + Vite
-- Tailwind CSS
-- Zustand for state
+Overview
 
-Backend (`backend/`)
-- Node.js + Express
-- MongoDB + Mongoose
+Rozgar is a mobile-first job discovery platform designed for blue-collar and semi-skilled workers such as maids, drivers, security guards, delivery partners, electricians, and plumbers.
 
-## Local setup
+The application focuses on simplicity, accessibility, and real-world usability, and works smoothly on any device — mobile, tablet, or desktop.
 
-### Quick commands from repo root (optional)
-- Install deps:
-  - `npm run install:frontend`
-  - `npm run install:backend`
-- Run:
-  - `npm run dev:backend`
-  - `npm run dev:frontend`
+The Problem
 
-### 1) Backend
-From `backend/`:
-1. Install deps:
-   - `npm install`
-2. Create env file:
-   - Copy `backend/.env.example` → `backend/.env`
-   - Set `MONGODB_URI` in `backend/.env`
-3. Run dev server:
-   - `npm run dev`
+Most job portals:
 
-Backend defaults:
-- `PORT=4000`
-- `CORS_ORIGIN=http://localhost:5173`
+Are text heavy
 
-### 2) Frontend
-From `frontend/`:
-1. Install deps:
-   - `npm install`
-2. Run dev server:
-   - `npm run dev`
+Require form filling and login
 
-Frontend talks to backend via:
-- `VITE_API_BASE_URL` (optional). If not set, it defaults to `http://localhost:4000`.
+Are difficult for non-English users
 
-## Usage notes
+Do not prioritize nearby jobs
 
-### Demo auth (Login/Signup)
-This project uses a minimal phone-based demo auth (no OTP/password) to keep flows end-to-end:
-- `POST /api/auth/signup` creates (or updates) a user by phone and role.
-- `POST /api/auth/login` logs in by phone.
+Blue-collar workers usually:
 
-The frontend sends these headers on API calls:
-- `x-role` — current selected role
-- `x-client-id` — the logged-in user id (used by backend as `ownerId`/`reporterId`)
+Need jobs near their location
 
-### Voice search
-Voice search uses the Web Speech API. It only works in browsers that support `SpeechRecognition` (commonly Chrome/Edge). If unsupported, the voice button won’t render.
+Prefer visual recognition over reading
 
-## Approach / product decisions (short)
-- Mobile-first layout and large tap targets to reduce friction.
-- Category-first navigation with icons to minimize reading effort.
-- Location-assisted sorting to quickly surface nearby jobs.
-- Trust signals:
-  - Verified/unverified badges on listings
-  - Reporting flow + admin moderation (hide/unhide)
-- Internationalization support uses a dictionary-based `t(key)` with a mock translation abstraction that can later be swapped to a backend proxy.
+Want quick contact, not long forms
 
-## What’s next (if you extend it)
-- Production-grade auth (OTP / JWT).
-- Real translation service via backend proxy.
-- Automated tests (none are currently configured).
+Worry about fake or unverified job posts
+
+Already use phone calls and WhatsApp
+
+Rozgar is designed specifically to solve these problems.
+
+Key Features
+
+Language Translation Support
+Users can switch languages to understand job details easily.
+
+Location-Wise Job Sorting
+Nearby jobs are shown first, reducing travel effort.
+
+Symbol-Based Job Recognition
+Icons and symbols help illiterate or semi-literate users identify job types quickly.
+
+Minimal Scrolling UI
+Important information is visible with very few scroll actions.
+
+Direct Call & WhatsApp Apply
+Workers can call or WhatsApp employers directly with one tap.
+
+Job Verification Status
+Each job clearly shows whether it is Verified or Not Verified.
+Verification is done by the app owner, helping users trust genuine listings.
+
+Reported Job Handling
+Jobs reported by users can be reviewed and removed by the app owner.
+
+Works on Any Device
+Fully responsive and usable on mobile, tablet, and desktop.
+
+Data & Authentication Approach
+Mock Data Usage
+
+The current version of the app works with mock/sample data.
+
+This was done to focus on UX, frontend structure, and user flow within limited time.
+
+The data structure is backend-ready and can be connected to real APIs easily.
+
+Authentication
+
+Authentication is not implemented in this version.
+
+This was a conscious decision to:
+
+Reduce friction for first-time users
+
+Allow instant job browsing and application via call/WhatsApp
+
+Authentication (OTP-based) can be added later without changing the UI.
+
+Challenges Faced & Trade-offs
+1. Language Translation
+
+Challenge:
+Most users are not comfortable with English, but Google Translate APIs are paid.
+
+Decision:
+Implemented a dictionary-based translation system for key job and UI content.
+
+Trade-off:
+Not fully dynamic, but lightweight, cost-effective, and scalable.
+
+2. Location-Wise Job Sorting
+
+Challenge:
+Real-time GPS and maps increase complexity and privacy concerns.
+
+Decision:
+Implemented proximity-based sorting logic using available location data.
+
+Trade-off:
+UI and logic are ready; GPS can be added later without redesign.
+
+3. Authentication
+
+Challenge:
+Authentication requires backend, OTP flows, and extra UI states.
+
+Decision:
+Skipped authentication to keep the experience fast and frictionless.
+
+Trade-off:
+Users can instantly browse and apply; auth can be added later if required.
+
+4. Backend Integration
+
+Challenge:
+Full backend integration within limited challenge time.
+
+Decision:
+Used mock data with a clean, backend-ready frontend architecture.
+
+Trade-off:
+Demonstrates complete product flow while keeping future integration easy.
+
+5. Voice / Speaker Support
+
+Challenge:
+Browser compatibility and testing complexity.
+
+Decision:
+Deferred voice support and focused on visual accessibility instead.
+
+Trade-off:
+Icons, symbols, and minimal text already support low-literacy users.
+
+6. Trust & Job Verification
+
+Challenge:
+Users worry about fake or unsafe job postings.
+
+Decision:
+Added Verified / Not Verified job status and owner-controlled moderation.
+
+Trade-off:
+Manual verification effort, but much higher user trust.
+
+Tech Stack
+
+React.js
+
+Vite
+
+JavaScript (ES6+)
+
+CSS
+
+Node.js
+
+MongoDB
+
+🌟 What I’m Proud Of
+
+Designing for real blue-collar users, not assumptions
+
+Making job application as easy as a phone call or WhatsApp message
+
+Building trust using verification and reporting features
+
+Creating an interface usable even for low-literacy users
+
+Making clear trade-offs instead of half-building features
+
+Delivering a working, deployed product within time constraints
+
+Owning the full journey: product thinking → UI → frontend → deployment
+
+This project reflects how I approach real-world problems with empathy and responsibility.
+
+Author
+
+Rishabh Jha
+React Developer
+Contact: 6206798893
+Email: jharishav@261
