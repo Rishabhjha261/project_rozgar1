@@ -1,6 +1,7 @@
 import { usePrefsStore } from '../store/prefsStore'
 
 const DEFAULT_BASE = 'https://project-rozgar-backend.onrender.com'
+const REQUEST_TIMEOUT = 20000 // 20 sec (Render cold start safe)
 
 export function getApiBaseUrl() {
   return import.meta.env.VITE_API_BASE_URL || DEFAULT_BASE
@@ -11,8 +12,6 @@ export async function apiFetch(
   { method = 'GET', body, query } = {}
 ) {
   const baseUrl = getApiBaseUrl()
-
-  // ✅ FIX: ensure correct URL joining
   const safePath = path.startsWith('/') ? path : `/${path}`
   const url = new URL(baseUrl + safePath)
 
@@ -25,6 +24,10 @@ export async function apiFetch(
 
   const prefs = usePrefsStore.getState()
 
+  // ✅ AbortController for timeout
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT)
+
   let res
   try {
     res = await fetch(url.toString(), {
@@ -35,24 +38,31 @@ export async function apiFetch(
         'x-client-id': prefs.clientId || '',
       },
       body: body ? JSON.stringify(body) : undefined,
+      signal: controller.signal,
     })
-  } catch (networkError) {
-    // ✅ Network / CORS / DNS failure
-    const err = new Error('network_error')
+  } catch (error) {
+    clearTimeout(timeoutId)
+
+    const err = new Error(
+      error.name === 'AbortError'
+        ? 'request_timeout'
+        : 'network_error'
+    )
     err.status = 0
-    err.payload = networkError
+    err.payload = error
     throw err
   }
+
+  clearTimeout(timeoutId)
 
   let json = {}
   try {
     json = await res.json()
   } catch {
-    // non-JSON response
+    // non-JSON response safe ignore
   }
 
   if (!res.ok) {
-    // ✅ Proper error with HTTP status
     const err = new Error(json?.error || 'request_failed')
     err.status = res.status
     err.payload = json
