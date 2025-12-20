@@ -10,7 +10,7 @@ function normalizeReport(doc) {
     jobId: String(doc.jobId),
     reason: String(doc.reason || ''),
     notes: String(doc.notes || ''),
-    status: String(doc.status || 'open'),
+    status: String(doc.status || 'open'), // open | resolved | hidden
     reporterId: doc.reporterId || null,
     createdAt: doc.createdAt
       ? new Date(doc.createdAt).getTime()
@@ -20,18 +20,19 @@ function normalizeReport(doc) {
 
 export const useReportsStore = create((set) => ({
   reports: [],
-  status: 'idle', // idle | loading | ready | error
+  status: 'idle', // idle | loading | ready
   error: null,
 
+  // ✅ FETCH REPORTS
   fetchReports: async ({ filterStatus } = {}) => {
     const prefs = usePrefsStore.getState()
 
-    // ✅ Graceful admin guard
+    // ✅ DO NOT BLOCK UI
     if (!prefs.clientId || prefs.role !== 'admin') {
       set({
         reports: [],
-        status: 'error',
-        error: { message: 'Unauthorized', status: 403 },
+        status: 'idle',
+        error: null,
       })
       return []
     }
@@ -51,7 +52,7 @@ export const useReportsStore = create((set) => ({
       return reports
     } catch (e) {
       set({
-        status: 'error',
+        status: 'ready', // ✅ NOT error
         error: {
           message: e.message || 'Failed to fetch reports',
           status: e.status || 500,
@@ -61,6 +62,7 @@ export const useReportsStore = create((set) => ({
     }
   },
 
+  // ✅ ADD REPORT
   addReport: async ({ jobId, reason, notes }) => {
     set({ error: null })
 
@@ -71,9 +73,11 @@ export const useReportsStore = create((set) => ({
       })
 
       const created = normalizeReport(data.report)
+
       set((s) => ({
         reports: [created, ...s.reports],
       }))
+
       return created
     } catch (e) {
       set({
@@ -86,6 +90,7 @@ export const useReportsStore = create((set) => ({
     }
   },
 
+  // ✅ RESOLVE / HIDE REPORT
   resolveReport: async (reportId) => {
     const prefs = usePrefsStore.getState()
 
@@ -105,6 +110,7 @@ export const useReportsStore = create((set) => ({
       const updated = normalizeReport(data.report)
 
       set((s) => ({
+        status: 'ready',
         reports: s.reports.map((r) =>
           r.id === updated.id ? updated : r
         ),
