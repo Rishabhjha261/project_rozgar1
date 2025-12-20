@@ -50,17 +50,33 @@ Rozgar is designed to solve these problems.
   Important information is visible with very few scroll actions.
 
 - **Direct Call & WhatsApp Apply**  
-  Workers can apply easily by calling or messaging employers directly.
+  Employees can contact employers directly via call or WhatsApp to apply for jobs easily.
+
+- **Role-Based Access & Responsibilities**
+
+  - **Admin**
+    - Can view reports made by employees
+    - Can hide or remove reported or inappropriate job listings
+    - Verifies job postings to ensure platform trust
+
+  - **Employer**
+    - Can also act as an employee
+    - Can view all available job listings
+    - Has the option to post new job opportunities
+
+  - **Employee**
+    - Can view all available jobs
+    - Can identify jobs using symbols and verification badges
+    - Can apply directly by calling or messaging the employer via WhatsApp
 
 - **Job Verification Status**  
-  Each job clearly shows whether it is **Verified or Not Verified**.  
-  Verification is done by the **app owner** to build trust.
+  Each job clearly shows whether it is **Verified or Not Verified**, verified by the app owner.
 
 - **Reported Job Moderation**  
-  Reported jobs can be reviewed and removed by the app owner.
+  Employees can report jobs, and the admin can review and hide or remove them.
 
 - **Works on Any Device**  
-  Fully responsive and usable on mobile, tablet, and desktop.
+  Fully responsive and usable on mobile, tablet, and desktop devices.
 
 ---
 
