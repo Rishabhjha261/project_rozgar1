@@ -2,7 +2,7 @@
 
 A mobile-first “Naukri for blue-collar workers” prototype focused on fast discovery, low-friction flows, regional-language friendliness, and trust signals.
 
-## Live features (high level)
+## Live features (high level)]
 - Job browsing by category + search (plus optional location-based sorting).
 - Three roles: `employee`, `employer`, `admin`.
 - Employer can post jobs.
